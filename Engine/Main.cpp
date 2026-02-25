@@ -1,5 +1,6 @@
 
 #include "Core/Win32Window.h"
+#include "Graphics/GraphicsContext.h"
 
 // Call-back function.
 // use for processing window message.
@@ -37,6 +38,10 @@ int main()
     {
         return -1;
     }
+
+    // Test Create Device.
+    Craft::GraphicsContext context;
+    context.Initialize(width, height, window);
 
     // Message Process Loop invoked from the window.
     // GetMessage - Sync method (Blocking method).
