@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Graphics\GraphicsContext.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Core\Win32Window.cpp" />
@@ -87,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="Core\Win32Window.h" />
     <ClInclude Include="Core\Common.h" />
+    <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Graphics\GraphicsContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

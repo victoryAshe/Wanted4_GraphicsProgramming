@@ -31,6 +31,38 @@ namespace Craft
 
 		//Create ViewPort.
 		CreateViewport(window);
+
+		// Create RTV.
+		CreateRenderTargetView();
+
+		// @Incomplete: In this Engine, We don't have to change viewport.
+		// because we use only one viewport.
+		// If you want to use multiple viewport, change the code below.
+		context->RSSetViewports(1, &viewport);
+	}
+
+	void GraphicsContext::BeginScene(float red, float green, float blue)
+	{
+		// Prepare the image to draw.
+		// Fill the image with the one colour.
+		// Simple Rendering Process: 
+		// Prepare a blank paper => Draw => Send to the moniter.
+
+		// Set paper to draw.
+		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+		// the colour we'll gonna use.
+		float backgroundColour[4] = { red, green, blue, 1.0f };
+
+		// Make it as a blank paper => Fill it with a colour. 
+		// It is memset => Partially Fill X.
+		context->ClearRenderTargetView(renderTargetView, backgroundColour);
+	}
+
+	void GraphicsContext::EndScene(uint32_t vsync)
+	{
+		// Send to the moniter (exchange backbuffer <=> frontbuffer).
+		swapChain->Present(0, 0);
 	}
 
 	void GraphicsContext::CreateDevice()
@@ -162,5 +194,45 @@ namespace Craft
 		viewport.Height = static_cast<float>(window.Height());
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
+	}
+
+	void GraphicsContext::CreateRenderTargetView()
+	{
+		// Traditional Method:
+		// Set Image attribute struct.
+		// create RTV based on the struct.
+
+		// But we: crate back-buffer's RTV.
+		// SwapCahin has basic back-buffer.
+		// we'll create RTV using SwapChain's back-buffer.
+
+		// variable to save back-buffer information loaded from swap-chain.
+		ID3D11Texture2D* backbuffer = nullptr;
+		HRESULT result = swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer));
+
+		// Exception Handling.
+		if (FAILED(result))
+		{
+			__debugbreak();
+			return;
+		}
+
+		// Device Creates RTV.
+		result = device->CreateRenderTargetView(
+			backbuffer, nullptr, &renderTargetView
+		);
+
+		// Exception Handling.
+		if (FAILED(result))
+		{
+			// Release resource used for creating RTV. 
+			SafeRelease(backbuffer);
+
+			__debugbreak();
+			return;
+		}
+
+		// Release resource used for creating RTV. 
+		SafeRelease(backbuffer);
 	}
 }
