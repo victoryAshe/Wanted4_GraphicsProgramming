@@ -19,6 +19,8 @@ int main()
 	// Create Window, => Draw images on the window using API.
     // Using Win32 API
 
+    std::wstring title = L"Craft Engine";
+
     // The size of window.
     uint32_t width = 1280;
     uint32_t height = 800;
@@ -29,6 +31,7 @@ int main()
     // Create Window
     Craft::Win32Window window(
         width, height,
+        title,
         hInstance,
         WindowProc
     );
@@ -41,7 +44,7 @@ int main()
 
     // Test Create Device.
     Craft::GraphicsContext context;
-    context.Initialize(width, height, window);
+    context.Initialize(window);
 
     // Message Process Loop invoked from the window.
     // GetMessage - Sync method (Blocking method).

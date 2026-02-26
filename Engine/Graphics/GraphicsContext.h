@@ -25,20 +25,25 @@ namespace Craft
 		~GraphicsContext();
 
 		//Initializer.
-		void Initialize(
-			uint32_t width, 
-			uint32_t height, 
-			const Win32Window& window);
+		void Initialize(const Win32Window& window);
+
+	private:
+		// Create Devices.
+		void CreateDevice();
+		void CreateSwapChain(const Win32Window& window);
+		void CreateViewport(const Win32Window& window);
 
 	private:
 
-		// Machines.
+		// Devices.
 		// Direct3D resources could be only handled by as a pointer.
 		// Request Create/Delete to API.
 		ID3D11Device* device = nullptr;
 
 		// Creates DrawCall.
 		ID3D11DeviceContext* context = nullptr;
+
+		// Provides Double Buffering Features.
 		IDXGISwapChain* swapChain = nullptr;
 
 		// ViewPort.

@@ -1,5 +1,6 @@
 #include "GraphicsContext.h"
-#include "../Core/Win32Window.h"
+#include "Core/Win32Window.h"
+#include "Core/Common.h"
 
 namespace Craft
 {
@@ -11,27 +12,28 @@ namespace Craft
 	GraphicsContext::~GraphicsContext()
 	{
 		// free the resources.
-		if (device)
-		{
-			// Free resources: Using Release function
-			device->Release();
-			device = nullptr;
-		}
-
-		if (context)
-		{
-			context->Release();
-			context = nullptr;
-		}
-
-		if (swapChain)
-		{
-			swapChain->Release();
-			swapChain = nullptr;
-		}
+		SafeRelease(device);
+		SafeRelease(context);
+		SafeRelease(swapChain);
 	}
 
-	void GraphicsContext::Initialize(uint32_t width, uint32_t height, const Win32Window& window)
+	void GraphicsContext::Initialize(const Win32Window& window)
+	{
+		// Set member variable 
+		width = window.Width();
+		height = window.Height();
+
+		// Create Device.
+		CreateDevice();
+
+		// Create SwapChain.
+		CreateSwapChain(window);
+
+		//Create ViewPort.
+		CreateViewport(window);
+	}
+
+	void GraphicsContext::CreateDevice()
 	{
 		// 플래그 지정.
 		uint32_t flag = 0;
@@ -84,10 +86,14 @@ namespace Craft
 			return;
 		}
 
-		// SwapChain 생성.
-		// 스왑체인 생성해주는 객체 얻어오기.
+
+	}
+
+	void GraphicsContext::CreateSwapChain(const Win32Window& window)
+	{
+		// Get Obejct Creates SwapChain.
 		IDXGIFactory* factory = nullptr;
-		result = CreateDXGIFactory(
+		HRESULT result = CreateDXGIFactory(
 			__uuidof(IDXGIFactory),
 			reinterpret_cast<void**>(&factory)
 		);
@@ -99,7 +105,6 @@ namespace Craft
 			return;
 		}
 
-		// 스왑체인 생성을 위한 자료 설정.
 		/*
 		*   DXGI_MODE_DESC BufferDesc;
 			DXGI_SAMPLE_DESC SampleDesc;
@@ -132,6 +137,7 @@ namespace Craft
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 		// 스왑 체인 생성.
+
 		result = factory->CreateSwapChain(
 			device,
 			&swapChainDesc,
@@ -145,20 +151,16 @@ namespace Craft
 		}
 
 		// 팩토리 객체 해제.
-		if (factory)
-		{
-			factory->Release();
-			factory = nullptr;
-		}
+		SafeRelease(factory);
+	}
 
-		//Create ViewPort.
+	void GraphicsContext::CreateViewport(const Win32Window& window)
+	{
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
 		viewport.Width = static_cast<float>(window.Width());
 		viewport.Height = static_cast<float>(window.Height());
 		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;		
+		viewport.MaxDepth = 1.0f;
 	}
-
-
 }

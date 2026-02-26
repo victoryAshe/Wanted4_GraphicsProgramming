@@ -14,8 +14,8 @@ namespace Craft
 		Win32Window(
 			uint32_t width = 1280,
 			uint32_t height = 800,
+			const std::wstring& title = L"",
 			HINSTANCE instance = nullptr,
-			
 			// Call-back function.
 			// use for processing window message.
 			// Window procedure.
@@ -33,7 +33,7 @@ namespace Craft
 		inline HWND Handle() const { return handle; }
 
 	private:
-		std::wstring title = L"Craft Engine";
+		std::wstring title;
 		
 		// !!IT MIGHT BE "UNIQUE NAME"!!: Register the window class.
 		std::wstring className = L"Craft Engine Class";
