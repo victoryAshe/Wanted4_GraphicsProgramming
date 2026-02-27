@@ -2,11 +2,17 @@
 #include "Core/Win32Window.h"
 #include "Core/Common.h"
 
+#include <cassert>
+
 namespace Craft
 {
+	// Initialize singleton variable.
+	GraphicsContext* GraphicsContext::instance = nullptr;
+
 	GraphicsContext::GraphicsContext()
 	{
-
+		assert(!instance);
+		instance = this;
 	}
 
 	GraphicsContext::~GraphicsContext()
@@ -63,6 +69,12 @@ namespace Craft
 	{
 		// Send to the moniter (exchange backbuffer <=> frontbuffer).
 		swapChain->Present(0, 0);
+	}
+
+	GraphicsContext& GraphicsContext::Get()
+	{
+		assert(instance);
+		return *instance;
 	}
 
 	void GraphicsContext::CreateDevice()
